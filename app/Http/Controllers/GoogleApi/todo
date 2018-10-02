@@ -1,0 +1,21 @@
+메일 발송, 첨부파일 가능
+메일 계정 생성
+
+테스트 코드
+
+메서드명 : 동사로 시작
+변수명 : 호출시, 내부외부 동일하게
+
+Controller에서는 단순 라우팅
+{
+//use app\Class\Common\GmailMsg;
+use vendor\luna\GmailMsg;
+}
+
+실제 객체는 따로 생성
+
+2차로 컴포저
+
+devluna.co.kr
+개발환경 구축
+
