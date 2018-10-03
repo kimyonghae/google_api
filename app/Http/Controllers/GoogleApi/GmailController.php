@@ -33,11 +33,14 @@ class GmailController extends Gmail
                 // Collect headers
                 $headers = collect($msg->getPayload()->headers);
                 return [
-                    'id' => $results->id,
+                    'resCode' => $results->id,
                     'Message-Id' => $headers
                 ];
             }
-            return ['msg'=> '전송 실패'];
+            return [
+                        'resCode' => '0000'
+                       ,'resMsg'  => '전송 안됨'
+                   ];
             /*
             $subjectCharset = $charset = 'utf-8';
             $strToMailName = 'receive Kim';
@@ -58,6 +61,10 @@ class GmailController extends Gmail
             */
         } catch (Exception $e) {
             echo 'An error occurred: ' . $e->getMessage();
+            return [
+                        'resCode' => '0000'
+                       ,'resMsg'  => '전송중 에러 : '.$e->getMessage()
+                   ];
         }
     }
 
