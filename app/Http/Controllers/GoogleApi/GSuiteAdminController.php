@@ -1,101 +1,57 @@
 <?php
 namespace App\Http\Controllers\GoogleApi;
 
-use Google_Service_Directory_User;
-use Google_Service_Directory_UserName;
 use App\Models\GoogleApi\GoogleUsersParam;
+use App\Object\GoogleApi\GSuiteAdmin;
 
-class GSuiteAdminController extends GSuiteAdmin
+class GSuiteAdminController
 {
-    protected $service;
+    private $resCode ='';
+    private $resMessage = '';
+    private $gsuiteAdmin;
 
     /**
      * GSuiteAdminController constructor.
+     * @param GSuiteAdmin $gsuiteAdmin
      */
-    public function __construct()
+    public function __construct(GSuiteAdmin $gsuiteAdmin)
     {
-        parent::__construct();
-        $this->service = new \Google_Service_Directory($this->client);
+        $this->gsuiteAdmin = $gsuiteAdmin;
     }
 
     /**
      * 신규 사용자 생성
      */
-    public function insertUser()
+    public function insertGoogleUser()
     {
-        try {
-            $param = $this->paramSet();
-            $userInfo = $this->userInfoSet($param);
 
-            $results = $this->service->users->insert($userInfo);
-            return var_dump($results);
+        try {
+            //request set to param
+            $googleUserParam = new GoogleUsersParam();
+            $googleUserParam->setFamilyName(request('familyName'));
+            $googleUserParam->setGivenName(request('givenName'));
+            $googleUserParam->setFullName(request('fullName'));
+            $googleUserParam->setPassword(request('password'));
+            $googleUserParam->setPrimaryEmail(request('primaryEmail'));
+
+            //user create
+            $results = $this->gsuiteAdmin->insertUser($googleUserParam);
+
+            //mail result
+            $this->resCode = $results['resCode'];
+            $this->resMessage  = $results['resMessage'];
         } catch (Exception $e) {
             echo 'An error occurred: ' . $e->getMessage();
+            $this->resCode = '2001';
+            $this->resMessage  = '처리중 에러 : '.$e->getMessage();
+        }finally{
+            return [
+                'resCode' => $this->resCode
+               ,'resMessage' => $this->resMessage
+            ];
         }
+
     }
 
-    /**
-     * 신규 사용자 param 정보 세팅
-     * @return GoogleUsersParam
-     */
-    public function paramSet()
-    {
-        try {
-            $gUserParam = new GoogleUsersParam();
-
-            $gUserParam->setFamilyName(request('familyName'));
-            $gUserParam->setGivenName(request('givenName'));
-            $gUserParam->setFullName(request('fullName'));
-            $gUserParam->setPassword(request('password'));
-            $gUserParam->setPrimaryEmail(request('primaryEmail'));
-
-            return $gUserParam;
-        } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
-        }
-    }
-
-    /**
-     * 신규 사용자 google api 등록 정보 세팅
-     * @param GoogleUsersParam $param
-     * @return Google_Service_Directory_User
-     */
-    public function userInfoSet(GoogleUsersParam $param)
-    {
-        try {
-            $userName = new Google_Service_Directory_UserName();
-            $userInfo = new Google_Service_Directory_User();
-
-            $userName->setFamilyName($param->getFamilyName());
-            $userName->setGivenName($param->getGivenName());
-            $userName->setFullName($param->getFullName());
-
-            $userInfo->setPrimaryEmail($param->getPrimaryEmail());
-            $userInfo->setName($userName);
-            $userInfo->setHashFunction($param->getHashFunction());
-            $userInfo->setPassword($param->getPassword());
-
-            return $userInfo;
-        } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
-        }
-    }
-
-
-    /**
-     *
-     */
-    public function  deleteUser()
-    {
-        try {
-            $userEmail = request('primaryEmail');
-
-            $results = $this->service->users->delete($userEmail);
-
-            return var_dump($results);
-        } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
-        }
-    }
 
 }

@@ -11,5 +11,8 @@ namespace App\Http\Controllers\GoogleApi;
 
 class TestController
 {
-
+    public function test()
+    {
+        echo env('APP_NAME','null data');
+    }
 }

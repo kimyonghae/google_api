@@ -1,23 +1,20 @@
 <?php
-namespace App\Http\Controllers\GoogleApi;
+namespace App\Object\GoogleApi;
 
 use Google_Client;
 use Google_Service_Gmail;
 /**
- * Class Gmail
- * @package App\Http\Controllers\GoogleApi
+ * Class GmailClient
+ * @package App\Object\GoogleApi
  */
-class Gmail
+class GmailClient
 {
-    protected $client;
-
-    public function __construct()
-    {
-        $this->getClient();
-    }
-
+    /**
+     * @return Google_Client
+     */
     public function getClient()
     {
+
         try
         {
             $client = new Google_Client();
@@ -27,7 +24,6 @@ class Gmail
             $credentials = __DIR__ . '/gmail_credentials.json';
             $client->setAuthConfig($credentials);
 
-            // Load previously authorized credentials from a file.
             $credentialsPath = __DIR__ . '/gmail_token.json';
             if (file_exists($credentialsPath)) {
                 $accessToken = json_decode(file_get_contents($credentialsPath), true);
@@ -68,11 +64,14 @@ class Gmail
                 // save to file
                 file_put_contents($credentialsPath, json_encode($accessTokenUpdated));
             }
-            return $this->client = $client;
+            return $client;
         }
         catch (Exception $e)
         {
             echo 'An error occurred: ' . $e->getMessage();
         }
+
     }
+
+
 }

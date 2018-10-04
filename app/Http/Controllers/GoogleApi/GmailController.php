@@ -1,189 +1,57 @@
 <?php
 namespace App\Http\Controllers\GoogleApi;
 
-use Google_Service_Gmail;
-use Google_Service_Gmail_Message;
-use Swift_Message;
+use App\Models\GoogleApi\GmailParam;
+use App\Object\GoogleApi\Gmail;
+use Exception;
 
-class GmailController extends Gmail
+class GmailController
 {
-    protected $service;
-    protected $userId = 'me';//인증 gmail 계정으로 세팅되는 특수 고정값
+    private $resCode ='';
+    private $resMessage = '';
+    private $gmail;
 
-    public function __construct()
+    /**
+     * GmailController constructor.
+     * @param Gmail $gmail
+     */
+    public function __construct(Gmail $gmail)
     {
-        parent::__construct();
-        $this->service = new Google_Service_Gmail($this->client);
+        $this->gmail = $gmail;
     }
 
     /**
      * Gmail 전송
-     * @return mixed
+     * @return array
      */
-    public function sendMessage()
+    public function sendGoogleMessage()
     {
         try {
+            //request set to param
+            $gmailParam = new GmailParam();
+            $gmailParam->setMailTo(request('mailTo'));
+            $gmailParam->setMailToName(request('mailToName'));
+            $gmailParam->setMailSubject(request('mailSubject'). date('M d, Y h:i:s A'));
+            $gmailParam->setMailContents(request('mailContents'));
 
-            $param = $this->paramSet();
-            $message = $this->messageSet($param);
+            //mail send by Gmail
+            $results = $this->gmail->sendMessage($gmailParam);
 
-            $results = $this->service->users_messages->send($this->userId, $message);
-            if($results){
-                $msg = $this->service->users_messages->get($this->userId, $results->id);
-                // Collect headers
-                $headers = collect($msg->getPayload()->headers);
-                return [
-                    'resCode' => $results->id,
-                    'Message-Id' => $headers
-                ];
-            }
+            //mail result
+            $this->resCode = $results['resCode'];
+            $this->resMessage  = $results['resMessage'];
+        } catch (Exception $e) {
+            echo 'An error occurred: ' . $e->getMessage();
+            $this->resCode = '2001';
+            $this->resMessage  = '처리중 에러 : '.$e->getMessage();
+        }finally{
             return [
-                        'resCode' => '0000'
-                       ,'resMsg'  => '전송 안됨'
-                   ];
-            /*
-            $subjectCharset = $charset = 'utf-8';
-            $strToMailName = 'receive Kim';
-            $strToMail = 'yhkim@lunasoft.co.kr';
-            $strSubject = 'Test mail using GMail API(테스트메일입니다.)' . date('M d, Y h:i:s A');
-            $strRawMessage = 'To: ' . $strToMailName . " <" . $strToMail . ">" . "\r\n";
-            $strRawMessage .= 'Subject: =?' . $subjectCharset . '?B?' . base64_encode($strSubject) . "?=\r\n";
-            $strRawMessage .= 'MIME-Version: 1.0' . "\r\n";
-            $strRawMessage .= 'Content-Type: text/plain; charset=' . $charset . "\r\n";
-            $strRawMessage .= 'Content-Transfer-Encoding: 7bit' . "\r\n\r\n";
-            $strRawMessage .= "에러확인 메일의 두번째 본문입니다." . "\r\n";
-            $mime = rtrim(strtr(base64_encode($strRawMessage), '+/', '-_'), '=');
-            $message = new Google_Service_Gmail_Message();
-            $message->setRaw($mime);
-            $message = $this->service->users_messages->send($this->userId, $message);
-            print 'Message with ID: ' . $message->getId() . ' sent.';
-            return $message->getId();
-            */
-        } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
-            return [
-                        'resCode' => '0000'
-                       ,'resMsg'  => '전송중 에러 : '.$e->getMessage()
-                   ];
+                'resCode' => $this->resCode
+               ,'resMessage' => $this->resMessage
+            ];
         }
+
     }
 
-    /**
-     * 메일 전송 param 정보 세팅
-     * @return Swift_Message
-     */
-    public function paramSet()
-    {
-        try {
-            $msg = new Swift_Message();
 
-            $msg->setTo(request('mailTo'),request('mailToName'));
-            $msg->setSubject(request('mailSubject'). date('M d, Y h:i:s A'));
-            $msg->setBody(request('mailContents'), 'text/html', 'utf-8');
-
-            return $msg;
-        } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
-        }
-    }
-
-    /**
-     * 메일 전송 데이터 세팅
-     * @param Swift_Message $param
-     * @return Google_Service_Gmail_Message
-     */
-    public function messageSet(Swift_Message $param)
-    {
-        try {
-            $g_message = new Google_Service_Gmail_Message();
-            $mime = rtrim(strtr(base64_encode($param), '+/', '-_'), '=');
-            $g_message->setRaw($mime);
-
-            return $g_message;
-        } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
-        }
-    }
-
-    /**
-     * 에러에 의해 전송되지 못한 메일 조회
-     * @return array
-     */
-    public function listMessages()
-    {
-        try {
-            $errList = $this->sendErrMessageList();
-            $result = $this->getMessage($errList);
-
-            return $result;
-        }
-        catch (Exception $e)
-        {
-            print 'An error occurred: ' . $e->getMessage();
-        }
-    }
-
-    /**
-     * 에러에 의해 수신된 메일 목록
-     * @return array
-     */
-    public function sendErrMessageList()
-    {
-        try {
-            $pageToken = NULL;
-            $messages = array();
-            $opt_param = array();
-            do {
-                try {
-                    $opt_param['labelIds'] = ['INBOX', 'UNREAD']; //받은메일함
-                    $opt_param['q'] = 'from=mailer-daemon@googlemail.com'; //송신자
-                    if ($pageToken) {
-                        $opt_param['pageToken'] = $pageToken;
-                    }
-                    $messagesResponse = $this->service->users_messages->listUsersMessages($this->userId, $opt_param);
-                    if ($messagesResponse->getMessages()) {
-                        $messages = array_merge($messages, $messagesResponse->getMessages());
-                        $pageToken = $messagesResponse->getNextPageToken();
-                    }
-                } catch (Exception $e) {
-                    print 'An error occurred: ' . $e->getMessage();
-                }
-            } while ($pageToken);
-
-            $errList = array();
-            foreach ($messages as $message) {
-                $errList[] = [
-                    'errId' => $message->id,
-                    'parantId' => $message->threadId
-                ];
-            }
-            return ['msgList'=>$errList];
-        }
-        catch (Exception $e)
-        {
-            print 'An error occurred: ' . $e->getMessage();
-        }
-    }
-
-    /**
-     * 에러에 의해 수신된 메일의 내용
-     * @param null $errList
-     * @return array
-     */
-    public function getMessage($errList = null)
-    {
-        try {
-            $messageList = array();
-            foreach ($errList['msgList'] as $errMsg){
-                $message = $this->service->users_messages->get($this->userId, $errMsg['errId']);
-                $messageList[] = [
-                                  'errMsg' => $message->getSnippet()
-                ];
-            }
-
-            return $messageList;
-        } catch (Exception $e) {
-            print 'An error occurred: ' . $e->getMessage();
-        }
-    }
 }

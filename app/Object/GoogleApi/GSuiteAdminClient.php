@@ -1,29 +1,20 @@
 <?php
-namespace App\Http\Controllers\GoogleApi;
+namespace App\Object\GoogleApi;
 
 use Google_Client;
 use Google_Service_Directory;
 /**
- * Class GSuiteAdmin
- * @package App\Http\Controllers\GoogleApi
+ * Class GSuiteAdminClient
+ * @package App\Object\GoogleApi
  */
-class GSuiteAdmin
+class GSuiteAdminClient
 {
-    protected $client;
-
-    /**
-     * GSuiteAdmin constructor.
-     */
-    public function __construct()
-    {
-        $this->getClient();
-    }
-
     /**
      * @return Google_Client
      */
     public function getClient()
     {
+
         try
         {
             $client = new Google_Client();
@@ -74,11 +65,14 @@ class GSuiteAdmin
                 // save to file
                 file_put_contents($credentialsPath, json_encode($accessTokenUpdated));
             }
-            return $this->client = $client;
+            return $client;
         }
         catch (Exception $e)
         {
             echo 'An error occurred: ' . $e->getMessage();
         }
+
     }
+
+
 }

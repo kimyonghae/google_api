@@ -11,12 +11,9 @@
 |
 */
 
-Route::post('/insertUser', 'GSuiteAdminController@insertUser');
-Route::post('/deleteUser', 'GSuiteAdminController@deleteUser');
+Route::post('/insertGoogleUser', 'GSuiteAdminController@insertGoogleUser');
 
-Route::post('/sendMessage', 'GmailController@sendMessage');
-Route::get('/listMessages', 'GmailController@listMessages');
-Route::get('/getMessage', 'GmailController@getMessage');
+Route::post('/sendGoogleMessage', 'GmailController@sendGoogleMessage');
 
 Route::get('/test', 'TestController@test');
 
