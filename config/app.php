@@ -211,4 +211,19 @@ return [
 
     ],
 
+    /*
+    |-------------------------------------------------------------------------
+    | Custom config variables
+    |-----------
+    |
+     */
+        'gmail_token' => storage_path('googleconfig\gmail_token.json'),
+        'gsuite_token' => storage_path('googleconfig\gsuite_token.json'),
+
+        'gmail_client_id' => env('GMAIL_CLIENT_ID',''),
+        'gmail_project_id' => env('GMAIL_PROJECT_ID',''),
+        'gmail_client_secret' => env('GMAIL_CLIENT_SECRET' ,''),
+        'gsuiteadmin_client_id' => env('GSUITEADMIN_CLIENT_ID',''),
+        'gsuiteadmin_project_id' => env('GSUITEADMIN_PROJECT_ID',''),
+        'gsuiteadmin_client_secret' => env('GSUITEADMIN_CLIENT_SECRET' ,''),
 ];

@@ -20,12 +20,12 @@ class GSuiteAdminClient
             $client = new Google_Client();
             $client->setApplicationName('G Suite Directory API PHP Quickstart');
             $client->setScopes(Google_Service_Directory::ADMIN_DIRECTORY_USER);
-            $client->setAuthConfig(__DIR__.'/gsuite_credentials.json');
+            $client->setAuthConfig($this->getAuthConfig());
             $client->setAccessType('offline');
             $client->setPrompt('select_account consent');
 
             // Load previously authorized credentials from a file.
-            $credentialsPath = __DIR__.'/gsuite_token.json';
+            $credentialsPath = config('app.gsuite_token');
             if (file_exists($credentialsPath)) {
                 $accessToken = json_decode(file_get_contents($credentialsPath), true);
             } else {
@@ -71,6 +71,25 @@ class GSuiteAdminClient
         {
             echo 'An error occurred: ' . $e->getMessage();
         }
+
+    }
+
+    private function getAuthConfig()
+    {
+        return [
+            "installed"=>[
+                "client_id" => config('app.gsuiteadmin_client_id'),
+                "project_id" => config('app.gsuiteadmin_project_id'),
+                "auth_uri" => "https=>//accounts.google.com/o/oauth2/auth",
+                "token_uri" => "https=>//www.googleapis.com/oauth2/v3/token",
+                "auth_provider_x509_cert_url"=>"https=>//www.googleapis.com/oauth2/v1/certs",
+                "client_secret"=>config('app.gsuiteadmin_client_secret'),
+                "redirect_uris"=>[
+                    "urn:ietf:wg:oauth:2.0:oob",
+                    "http=>//localhost"
+                ]
+            ]
+        ];
 
     }
 

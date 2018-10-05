@@ -21,10 +21,9 @@ class GmailClient
             $client->setApplicationName('Gmail API PHP Quickstart');
             $client->setScopes(Google_Service_Gmail::MAIL_GOOGLE_COM);
             $client->setAccessType('offline');
-            $credentials = __DIR__ . '/gmail_credentials.json';
-            $client->setAuthConfig($credentials);
+            $client->setAuthConfig($this->getAuthConfig());
 
-            $credentialsPath = __DIR__ . '/gmail_token.json';
+            $credentialsPath = config('app.gmail_token');
             if (file_exists($credentialsPath)) {
                 $accessToken = json_decode(file_get_contents($credentialsPath), true);
             } else {
@@ -70,6 +69,25 @@ class GmailClient
         {
             echo 'An error occurred: ' . $e->getMessage();
         }
+
+    }
+
+    private function getAuthConfig()
+    {
+        return [
+            "installed"=>[
+                "client_id" => config('app.gmail_client_id'),
+                "project_id" => config('app.gmail_project_id'),
+                "auth_uri" => "https=>//accounts.google.com/o/oauth2/auth",
+                "token_uri" => "https=>//www.googleapis.com/oauth2/v3/token",
+                "auth_provider_x509_cert_url"=>"https=>//www.googleapis.com/oauth2/v1/certs",
+                "client_secret"=>config('app.gmail_client_secret'),
+                "redirect_uris"=>[
+                    "urn:ietf:wg:oauth:2.0:oob",
+                    "http=>//localhost"
+                ]
+            ]
+        ];
 
     }
 

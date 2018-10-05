@@ -5,6 +5,7 @@ use App\Models\GoogleApi\GmailParam;
 use Exception;
 use Google_Service_Gmail;
 use Google_Service_Gmail_Message;
+use Swift_Attachment;
 use Swift_Message;
 
 /**
@@ -14,7 +15,7 @@ use Swift_Message;
 class Gmail
 {
     private $resCode ='0000';
-    private $resMessage = '등록 완료';
+    private $resMessage = '전송 완료';
 
     private $userId = 'me';//인증 gmail 계정으로 세팅되는 특수 고정값
     private $service;
@@ -78,11 +79,23 @@ class Gmail
     {
 
         try {
+
+
             $req_message = new Swift_Message();
 
             $req_message->setTo($gmailParam->getMailTo(), $gmailParam->getMailToName());
             $req_message->setSubject($gmailParam->getMailSubject(). date('M d, Y h:i:s A'));
             $req_message->setBody($gmailParam->getMailContents(), 'text/html', 'utf-8');
+
+            //test
+            $req_message->attach(Swift_Attachment::fromPath('C:\dev\google_api_proc_pkg\mailtestfile.txt'));
+            //real
+//            $target_path = "uploads/" . basename($_FILES['attachment']['name']);
+//            if( move_uploaded_file($_FILES['attachment']['tmp_name'], $target_path) ) {
+//                $req_message->attach(Swift_Attachment::fromPath($target_path));
+//                //if we don't want to keep the image
+//                unlink($target_path);
+//            }
 
             return $req_message;
         } catch (Exception $e) {

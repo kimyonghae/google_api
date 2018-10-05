@@ -17,6 +17,9 @@ yarn-error.log
 /app/Http/Controllers/GoogleApi/*_token.json
 /app/Http/Controllers/GoogleApi/*_credentials.json
 
+/storage/googleconfig/*_token.json
+/storage/googleconfig/*_credentials.json
+
 #github 자동완성 목록
 
 # Laravel 4 specific
