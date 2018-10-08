@@ -82,7 +82,7 @@ class Gmail
             $req_message = new Swift_Message();
 
             $req_message->setTo($gmailParam->getMailTo(), $gmailParam->getMailToName());
-            $req_message->setSubject($gmailParam->getMailSubject(). date('M d, Y h:i:s A'));
+            $req_message->setSubject($gmailParam->getMailSubject());
             $req_message->setBody($gmailParam->getMailContents(), 'text/html', 'utf-8');
             if( $gmailParam->getMailAttachPath() ) {
                 $target_path = config('app.gmail_attach_file_path'). $gmailParam->getMailAttachFileName();
