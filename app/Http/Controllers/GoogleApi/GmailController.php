@@ -7,8 +7,8 @@ use Exception;
 
 class GmailController
 {
-    private $resCode ='';
-    private $resMessage = '';
+    private $resCode ='0000';
+    private $resMessage = '전송 완료';
     private $gmail;
 
     /**
@@ -33,6 +33,13 @@ class GmailController
             $gmailParam->setMailToName(request('mailToName'));
             $gmailParam->setMailSubject(request('mailSubject'). date('M d, Y h:i:s A'));
             $gmailParam->setMailContents(request('mailContents'));
+
+            if( isset($_FILES['mailAttach']) ){
+                $target_path = $_FILES['mailAttach']['tmp_name'];
+                $file_name = basename($_FILES['mailAttach']['name']);
+                $gmailParam->setMailAttachPath($target_path);
+                $gmailParam->setMailAttachFileName($file_name);
+            }
 
             //mail send by Gmail
             $results = $this->gmail->sendMessage($gmailParam);

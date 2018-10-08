@@ -6,8 +6,8 @@ use App\Object\GoogleApi\GSuiteAdmin;
 
 class GSuiteAdminController
 {
-    private $resCode ='';
-    private $resMessage = '';
+    private $resCode ='0000';
+    private $resMessage = '등록 완료';
     private $gsuiteAdmin;
 
     /**

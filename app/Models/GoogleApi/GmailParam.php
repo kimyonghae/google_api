@@ -7,6 +7,8 @@ class GmailParam
     private $mail_toName;
     private $mail_subject;
     private $mail_contents;
+    private $mail_attach_path;
+    private $mail_attach_file_name;
 
     /**
      * @return mixed
@@ -72,6 +74,37 @@ class GmailParam
         $this->mail_contents = $mail_contents;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getMailAttachPath()
+    {
+        return $this->mail_attach_path;
+    }
+
+    /**
+     * @param mixed $mail_attach_path
+     */
+    public function setMailAttachPath($mail_attach_path)
+    {
+        $this->mail_attach_path = $mail_attach_path;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMailAttachFileName()
+    {
+        return $this->mail_attach_file_name;
+    }
+
+    /**
+     * @param mixed $mail_attach_file_name
+     */
+    public function setMailAttachFileName($mail_attach_file_name)
+    {
+        $this->mail_attach_file_name = $mail_attach_file_name;
+    }
 
 
 }

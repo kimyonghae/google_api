@@ -84,13 +84,14 @@ class Gmail
             $req_message->setTo($gmailParam->getMailTo(), $gmailParam->getMailToName());
             $req_message->setSubject($gmailParam->getMailSubject(). date('M d, Y h:i:s A'));
             $req_message->setBody($gmailParam->getMailContents(), 'text/html', 'utf-8');
-
-            //real
-            $target_path = "/uploads/" . basename($_FILES['mailAttach']['name']);
-            if( move_uploaded_file($_FILES['mailAttach']['tmp_name'], $target_path) ) {
-                $req_message->attach(Swift_Attachment::fromPath($target_path));
-                //if we don't want to keep the image
-                //unlink($target_path);
+            if( $gmailParam->getMailAttachPath() ) {
+                $target_path = config('app.gmail_attach_file_path'). $gmailParam->getMailAttachFileName();
+                if(move_uploaded_file($gmailParam->getMailAttachPath(), $target_path)){
+                    $gmailParam->setMailAttachPath($target_path);
+                    $req_message->attach(Swift_Attachment::fromPath($gmailParam->getMailAttachPath()));
+                    //if we don't want to keep the image
+                    //unlink($target_path);
+                }
             }
             return $req_message;
         } catch (Exception $e) {
