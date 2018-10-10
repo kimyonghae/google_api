@@ -14,8 +14,12 @@ use Illuminate\Support\Facades\Log;
  */
 class GSuiteAdmin
 {
-    private $resCode ='0000';
-    private $resMessage = '등록 완료';
+    private const PROC_RETURN_SUCCEED = '0000';
+    private const PROC_RETURN_FAILED = '1001';
+    private const PROC_RETURN_ERROR = '1002';
+
+    private $resCode ='9999';
+    private $resMessage = '처리할 수 없습니다.';
 
     private $service;
 
@@ -45,15 +49,15 @@ class GSuiteAdmin
             $results = $this->service->insert($userInfo);
 
             if ($results) {
-                $this->resCode = '0000';
+                $this->resCode = GSuiteAdmin::PROC_RETURN_SUCCEED;
                 $this->resMessage = '등록 완료';
             } else {
-                $this->resCode = '1001';
+                $this->resCode = GSuiteAdmin::PROC_RETURN_FAILED;
                 $this->resMessage = '등록 안됨';
             }
         } catch (Exception $e) {
             echo 'An error occurred: ' . $e->getMessage();
-            $this->resCode = '1002';
+            $this->resCode = GSuiteAdmin::PROC_RETURN_ERROR;
             $this->resMessage  = '등록중 에러 : '.$e->getMessage();
         }finally{
             return [

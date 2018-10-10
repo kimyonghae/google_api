@@ -14,8 +14,12 @@ use Swift_Message;
  */
 class Gmail
 {
-    private $resCode ='0000';
-    private $resMessage = '전송 완료';
+    private const PROC_RETURN_SUCCEED = '0000';
+    private const PROC_RETURN_FAILED = '1001';
+    private const PROC_RETURN_ERROR = '1002';
+
+    private $resCode ='9999';
+    private $resMessage = '처리할 수 없습니다.';
 
     private $userId = 'me';//인증 gmail 계정으로 세팅되는 특수 고정값
     private $service;
@@ -48,16 +52,16 @@ class Gmail
                 $result_message = $this->service->get($this->userId, $results->id);
                 $headers = collect($result_message->getPayload()->getHeaders());
 
-                $this->resCode = '0000';
+                $this->resCode = Gmail::PROC_RETURN_SUCCEED;
                 $this->resMessage  = $headers[3]->value;
             }else{
-                $this->resCode = '1001';
+                $this->resCode = Gmail::PROC_RETURN_FAILED;
                 $this->resMessage  = '전송 안됨';
             }
 
         } catch (Exception $e) {
             echo 'An error occurred: ' . $e->getMessage();
-            $this->resCode = '1002';
+            $this->resCode = Gmail::PROC_RETURN_ERROR;
             $this->resMessage  = '전송중 에러 : '.$e->getMessage();
         }finally{
             return [

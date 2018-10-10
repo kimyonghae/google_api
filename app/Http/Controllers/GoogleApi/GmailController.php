@@ -7,8 +7,8 @@ use Exception;
 
 class GmailController
 {
-    private $resCode ='0000';
-    private $resMessage = '전송 완료';
+    private $resCode ='9999';
+    private $resMessage = '처리할 수 없습니다.';
     private $gmail;
 
     /**
