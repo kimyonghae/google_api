@@ -19,3 +19,13 @@ use vendor\luna\GmailMsg;
 devluna.co.kr
 개발환경 구축
 
+
+
+-------------------
+
+method 세분화 (ex. 메일전송 후 헤더에서 제목을 가져오는 부분
+
+return code 상수화
+
+namespace 와 autoload 의 사용 관계 use 등의 명시 필요성 확인 *
+
