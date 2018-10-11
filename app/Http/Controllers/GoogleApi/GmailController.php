@@ -2,13 +2,14 @@
 namespace App\Http\Controllers\GoogleApi;
 
 use App\Models\GoogleApi\GmailParam;
+use App\Object\CommonConst as CODE;
 use App\Object\GoogleApi\Gmail;
 use Exception;
 
 class GmailController
 {
-    private $resCode ='9999';
-    private $resMessage = '처리할 수 없습니다.';
+    private $resCode    = CODE::PROC_RETURN_DEFAULT;
+    private $resMessage = CODE::PROC_RETURN_DEFAULT_MSG;
     private $gmail;
 
     /**

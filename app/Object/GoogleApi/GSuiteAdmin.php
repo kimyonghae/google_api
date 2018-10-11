@@ -2,11 +2,11 @@
 namespace App\Object\GoogleApi;
 
 use App\Models\GoogleApi\GoogleUsersParam;
+use App\Object\CommonConst as CODE;
 use Exception;
 use Google_Service_Directory;
 use Google_Service_Directory_User;
 use Google_Service_Directory_UserName;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Class GSuiteAdmin
@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Log;
  */
 class GSuiteAdmin
 {
-    private const PROC_RETURN_SUCCEED = '0000';
-    private const PROC_RETURN_FAILED = '1001';
-    private const PROC_RETURN_ERROR = '1002';
-
     private $resCode ='9999';
     private $resMessage = '처리할 수 없습니다.';
 
@@ -49,16 +45,16 @@ class GSuiteAdmin
             $results = $this->service->insert($userInfo);
 
             if ($results) {
-                $this->resCode = GSuiteAdmin::PROC_RETURN_SUCCEED;
-                $this->resMessage = '등록 완료';
+                $this->resCode    = CODE::PROC_RETURN_SUCCEED;
+                $this->resMessage = CODE::PROC_RETURN_SUCCEED_MSG;
             } else {
-                $this->resCode = GSuiteAdmin::PROC_RETURN_FAILED;
-                $this->resMessage = '등록 안됨';
+                $this->resCode    = CODE::PROC_RETURN_FAILED;
+                $this->resMessage = CODE::PROC_RETURN_FAILED_MSG;
             }
         } catch (Exception $e) {
             echo 'An error occurred: ' . $e->getMessage();
-            $this->resCode = GSuiteAdmin::PROC_RETURN_ERROR;
-            $this->resMessage  = '등록중 에러 : '.$e->getMessage();
+            $this->resCode     = CODE::PROC_RETURN_ERROR;
+            $this->resMessage  = CODE::PROC_RETURN_ERROR_MSG.' : '.$e->getMessage();
         }finally{
             return [
                 'resCode' => $this->resCode

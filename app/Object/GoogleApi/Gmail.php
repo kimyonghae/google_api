@@ -7,6 +7,7 @@ use Google_Service_Gmail;
 use Google_Service_Gmail_Message;
 use Swift_Attachment;
 use Swift_Message;
+use App\Object\CommonConst as CODE;
 
 /**
  * Class Gmail
@@ -14,10 +15,6 @@ use Swift_Message;
  */
 class Gmail
 {
-    private const PROC_RETURN_SUCCEED = '0000';
-    private const PROC_RETURN_FAILED = '1001';
-    private const PROC_RETURN_ERROR = '1002';
-
     private $resCode ='9999';
     private $resMessage = '처리할 수 없습니다.';
 
@@ -49,20 +46,20 @@ class Gmail
 
             $results = $this->service->send($this->userId, $google_message);
             if($results){
-                $result_message = $this->service->get($this->userId, $results->id);
-                $headers = collect($result_message->getPayload()->getHeaders());
+                $message_id = $results->id;
+                $message_title = $this->getMessageTitle($message_id);
 
-                $this->resCode = Gmail::PROC_RETURN_SUCCEED;
-                $this->resMessage  = $headers[3]->value;
+                $this->resCode     = CODE::PROC_RETURN_SUCCEED;
+                $this->resMessage  = $message_title;
             }else{
-                $this->resCode = Gmail::PROC_RETURN_FAILED;
-                $this->resMessage  = '전송 안됨';
+                $this->resCode     = CODE::PROC_RETURN_FAILED;
+                $this->resMessage  = CODE::PROC_RETURN_FAILED_MSG;
             }
 
         } catch (Exception $e) {
             echo 'An error occurred: ' . $e->getMessage();
-            $this->resCode = Gmail::PROC_RETURN_ERROR;
-            $this->resMessage  = '전송중 에러 : '.$e->getMessage();
+            $this->resCode     = CODE::PROC_RETURN_ERROR;
+            $this->resMessage  = CODE::PROC_RETURN_ERROR_MSG.' : '.$e->getMessage();
         }finally{
             return [
                 'resCode' => $this->resCode
@@ -125,6 +122,20 @@ class Gmail
             throw new Exception('setMessage() error');
         }
 
+    }
+
+    /**
+     * 전송한 메일의 제목을 가져옴
+     * @param $message_id
+     * @return mixed
+     */
+    private function getMessageTitle($message_id)
+    {
+        $result_message = $this->service->get($this->userId, $message_id);
+        $headers = collect($result_message->getPayload()->getHeaders());
+        $message_title = $headers[CODE::MESSAGE_HEADER_TITLE]->value;
+
+        return $message_title;
     }
 
 

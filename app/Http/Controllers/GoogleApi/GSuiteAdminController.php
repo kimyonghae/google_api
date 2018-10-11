@@ -3,11 +3,12 @@ namespace App\Http\Controllers\GoogleApi;
 
 use App\Models\GoogleApi\GoogleUsersParam;
 use App\Object\GoogleApi\GSuiteAdmin;
+use App\Object\CommonConst as CODE;
 
 class GSuiteAdminController
 {
-    private $resCode ='9999';
-    private $resMessage = '처리할 수 없습니다.';
+    private $resCode    = CODE::PROC_RETURN_DEFAULT;
+    private $resMessage = CODE::PROC_RETURN_DEFAULT_MSG;
     private $gsuiteAdmin;
 
     /**
