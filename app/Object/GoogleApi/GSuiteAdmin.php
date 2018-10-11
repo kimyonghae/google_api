@@ -21,11 +21,12 @@ class GSuiteAdmin
 
     /**
      * GSuiteAdmin constructor.
-     * @param GSuiteAdminClient $GSuiteAdminClient
+     * @param GoogleClient $GSuiteAdminClient
+     * @internal param $
      */
-    public function __construct(GSuiteAdminClient $GSuiteAdminClient)
+    public function __construct(GoogleClient $GSuiteAdminClient)
     {
-        $client = $GSuiteAdminClient->getClient();
+        $client = $GSuiteAdminClient->getClient(CODE::GOOGLE_API_GSUITEADMIN);
         $service = new Google_Service_Directory($client);
         $this->service = $service->users;
     }
@@ -52,7 +53,7 @@ class GSuiteAdmin
                 $this->resMessage = CODE::PROC_RETURN_FAILED_MSG;
             }
         } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
+            echo 'insertUser: ' . $e->getMessage();
             $this->resCode     = CODE::PROC_RETURN_ERROR;
             $this->resMessage  = CODE::PROC_RETURN_ERROR_MSG.' : '.$e->getMessage();
         }finally{
@@ -89,7 +90,7 @@ class GSuiteAdmin
 
             return $userInfo;
         } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
+            echo 'setUserInfo: ' . $e->getMessage();
             throw new Exception('setUserInfo() error');
         }
 

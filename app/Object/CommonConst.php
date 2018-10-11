@@ -3,6 +3,10 @@ namespace App\Object;
 
 class CommonConst
 {
+    /*api flag*/
+    const GOOGLE_API_GMAIL       = '01';
+    const GOOGLE_API_GSUITEADMIN = '02';
+
     /*return code*/
     const PROC_RETURN_DEFAULT = '9999';
     const PROC_RETURN_SUCCEED = '0000';

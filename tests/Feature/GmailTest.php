@@ -17,7 +17,7 @@ class GmailTest extends TestCase
     public function testExample()
     {
 
-        $file_path = __DIR__.'\테스트첨부파일.txt';
+        $file_path = __DIR__.'\메일첨부파일.txt';
         $uploadedFile = new UploadedFile (
             $file_path,
             '테스트첨부파일.txt',
@@ -32,7 +32,7 @@ class GmailTest extends TestCase
             'mailToName'=> '김 용해',
             'mailSubject'=> '테스트메일입니다.',
             'mailContents'=> '테스트메일의 내용입니다.',
-            'mailAttach' => ['file' => $uploadedFile]
+            ['file' => $uploadedFile]
         ])->assertJson([
             'resCode' => '0000'
         ]);

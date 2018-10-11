@@ -23,11 +23,12 @@ class Gmail
 
     /**
      * Gmail constructor.
-     * @param GmailClient $gmailClient
+     * @param GoogleClient $gmailClient
+     * @internal param $
      */
-    public function __construct(GmailClient $gmailClient)
+    public function __construct(GoogleClient $gmailClient)
     {
-        $client = $gmailClient->getClient();
+        $client = $gmailClient->getClient(CODE::GOOGLE_API_GMAIL);
         $service = new Google_Service_Gmail($client);
         $this->service =$service->users_messages;
     }
@@ -57,7 +58,7 @@ class Gmail
             }
 
         } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
+            echo 'sendMessage: ' . $e->getMessage();
             $this->resCode     = CODE::PROC_RETURN_ERROR;
             $this->resMessage  = CODE::PROC_RETURN_ERROR_MSG.' : '.$e->getMessage();
         }finally{
@@ -96,7 +97,7 @@ class Gmail
             }
             return $req_message;
         } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
+            echo 'setRequest: ' . $e->getMessage();
             throw new Exception('setRequest() error');
         }
 
@@ -118,7 +119,7 @@ class Gmail
 
             return $google_message;
         } catch (Exception $e) {
-            echo 'An error occurred: ' . $e->getMessage();
+            echo 'setMessage: ' . $e->getMessage();
             throw new Exception('setMessage() error');
         }
 
@@ -128,14 +129,20 @@ class Gmail
      * 전송한 메일의 제목을 가져옴
      * @param $message_id
      * @return mixed
+     * @throws Exception
      */
     private function getMessageTitle($message_id)
     {
-        $result_message = $this->service->get($this->userId, $message_id);
-        $headers = collect($result_message->getPayload()->getHeaders());
-        $message_title = $headers[CODE::MESSAGE_HEADER_TITLE]->value;
+        try {
+            $result_message = $this->service->get($this->userId, $message_id);
+            $headers = collect($result_message->getPayload()->getHeaders());
+            $message_title = $headers[CODE::MESSAGE_HEADER_TITLE]->value;
 
-        return $message_title;
+            return $message_title;
+        } catch (Exception $e) {
+            echo 'getMessageTitle: ' . $e->getMessage();
+            throw new Exception('getMessageTitle() error');
+        }
     }
 
 
