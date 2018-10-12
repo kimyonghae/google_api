@@ -6,8 +6,7 @@ class GoogleUsersParam
     private $familyName;
     private $givenName;
     private $fullName;
-    private $name;
-    private $hashFunction = 'MD5';
+    private $hashFunction = 'SHA-1'; //hash() 에서는 SHA1, google api 에서는 SHA-1 표기로 사용됨.
     private $password;
     private $primaryEmail;
 
@@ -62,22 +61,6 @@ class GoogleUsersParam
     /**
      * @return mixed
      */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param mixed $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getHashFunction()
     {
         return $this->hashFunction;
@@ -96,7 +79,7 @@ class GoogleUsersParam
      */
     public function setPassword($password = 'password')
     {
-        $this->password = hash('MD5', $password);
+        $this->password = hash('SHA1', $password);
     }
 
     /**
