@@ -3,27 +3,19 @@ namespace App\Models\GoogleApi;
 
 class GoogleUsersParam
 {
-    private $familyName;
-    private $givenName;
-    private $fullName;
-    private $hashFunction = 'SHA-1'; //hash() 에서는 SHA1, google api 에서는 SHA-1 표기로 사용됨.
+    private $family_name;
+    private $given_name;
+    private $full_name;
+    private $hash_function = 'SHA-1'; //hash() 에서는 SHA1, google api 에서는 SHA-1 표기로 사용됨.
     private $password;
-    private $primaryEmail;
+    private $primary_email;
 
     /**
      * @return mixed
      */
     public function getFamilyName()
     {
-        return $this->familyName;
-    }
-
-    /**
-     * @param mixed $familyName
-     */
-    public function setFamilyName($familyName)
-    {
-        $this->familyName = $familyName;
+        return $this->family_name;
     }
 
     /**
@@ -31,15 +23,7 @@ class GoogleUsersParam
      */
     public function getGivenName()
     {
-        return $this->givenName;
-    }
-
-    /**
-     * @param mixed $givenName
-     */
-    public function setGivenName($givenName)
-    {
-        $this->givenName = $givenName;
+        return $this->given_name;
     }
 
     /**
@@ -47,23 +31,15 @@ class GoogleUsersParam
      */
     public function getFullName()
     {
-        return $this->fullName;
+        return $this->full_name;
     }
 
     /**
-     * @param mixed $fullName
-     */
-    public function setFullName($fullName)
-    {
-        $this->fullName = $fullName;
-    }
-
-    /**
-     * @return mixed
+     * @return string
      */
     public function getHashFunction()
     {
-        return $this->hashFunction;
+        return $this->hash_function;
     }
 
     /**
@@ -75,6 +51,46 @@ class GoogleUsersParam
     }
 
     /**
+     * @return mixed
+     */
+    public function getPrimaryEmail()
+    {
+        return $this->primary_email;
+    }
+
+    /**
+     * @param mixed $family_name
+     */
+    public function setFamilyName($family_name)
+    {
+        $this->family_name = $family_name;
+    }
+
+    /**
+     * @param mixed $given_name
+     */
+    public function setGivenName($given_name)
+    {
+        $this->given_name = $given_name;
+    }
+
+    /**
+     * @param mixed $full_name
+     */
+    public function setFullName($full_name)
+    {
+        $this->full_name = $full_name;
+    }
+
+    /**
+     * @param string $hash_function
+     */
+    public function setHashFunction($hash_function)
+    {
+        $this->hash_function = $hash_function;
+    }
+
+    /**
      * @param mixed $password
      */
     public function setPassword($password = 'password')
@@ -83,19 +99,12 @@ class GoogleUsersParam
     }
 
     /**
-     * @return mixed
+     * @param mixed $primary_email
      */
-    public function getPrimaryEmail()
+    public function setPrimaryEmail($primary_email)
     {
-        return $this->primaryEmail;
+        $this->primary_email = $primary_email;
     }
 
-    /**
-     * @param mixed $primaryEmail
-     */
-    public function setPrimaryEmail($primaryEmail)
-    {
-        $this->primaryEmail = $primaryEmail;
-    }
 
 }

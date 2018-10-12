@@ -9,16 +9,6 @@ class GSuiteAdminController
 {
     private $resCode    = CODE::PROC_RETURN_DEFAULT;
     private $resMessage = CODE::PROC_RETURN_DEFAULT_MSG;
-    private $gsuiteAdmin;
-
-    /**
-     * GSuiteAdminController constructor.
-     * @param GSuiteAdmin $gsuiteAdmin
-     */
-    public function __construct(GSuiteAdmin $gsuiteAdmin)
-    {
-        $this->gsuiteAdmin = $gsuiteAdmin;
-    }
 
     /**
      * 신규 사용자 생성
@@ -36,7 +26,8 @@ class GSuiteAdminController
             $googleUserParam->setPrimaryEmail(request('primaryEmail'));
 
             //user create
-            $results = $this->gsuiteAdmin->insertUser($googleUserParam);
+            $gsuiteAdmin = new GSuiteAdmin();
+            $results = $gsuiteAdmin->insertUser($googleUserParam);
 
             //mail result
             $this->resCode = $results['resCode'];

@@ -15,22 +15,28 @@ use App\Object\CommonConst as CODE;
  */
 class Gmail
 {
-    private $resCode ='9999';
-    private $resMessage = '처리할 수 없습니다.';
+    private $resCode    = CODE::PROC_RETURN_DEFAULT;
+    private $resMessage = CODE::PROC_RETURN_DEFAULT_MSG;
 
     private $userId = 'me';//인증 gmail 계정으로 세팅되는 특수 고정값
     private $service;
 
     /**
-     * Gmail constructor.
-     * @param GoogleClient $gmailClient
-     * @internal param $
+     * client 생성
+     * @return bool
      */
-    public function __construct(GoogleClient $gmailClient)
+    private function getMailClient()
     {
-        $client = $gmailClient->getClient(CODE::GOOGLE_API_GMAIL);
-        $service = new Google_Service_Gmail($client);
-        $this->service =$service->users_messages;
+        try {
+            $gmailClient = new GoogleClient();
+            $client = $gmailClient->getClient(CODE::GOOGLE_API_GMAIL);
+            $service = new Google_Service_Gmail($client);
+            $this->service = $service->users_messages;
+            return true;
+        } catch (Exception $e) {
+            echo 'getMailClient: ' . $e->getMessage();
+            return false;
+        }
     }
 
     /**
@@ -42,19 +48,25 @@ class Gmail
     {
 
         try {
-            $req_message = $this->setRequest($gmailParam);
-            $google_message = $this->setMessage($req_message);
+            $client = $this->getMailClient();
+            if($client){
+                $req_message = $this->setRequest($gmailParam);
+                $google_message = $this->setMessage($req_message);
 
-            $results = $this->service->send($this->userId, $google_message);
-            if($results){
-                $message_id = $results->id;
-                $message_title = $this->getMessageTitle($message_id);
+                $results = $this->service->send($this->userId, $google_message);
+                if($results){
+                    $message_id = $results->id;
+                    $message_title = $this->getMessageTitle($message_id);
 
-                $this->resCode     = CODE::PROC_RETURN_SUCCEED;
-                $this->resMessage  = $message_title;
+                    $this->resCode     = CODE::PROC_RETURN_SUCCEED;
+                    $this->resMessage  = $message_title;
+                }else{
+                    $this->resCode     = CODE::PROC_RETURN_FAILED;
+                    $this->resMessage  = CODE::PROC_RETURN_FAILED_MSG;
+                }
             }else{
-                $this->resCode     = CODE::PROC_RETURN_FAILED;
-                $this->resMessage  = CODE::PROC_RETURN_FAILED_MSG;
+                $this->resCode     = CODE::CLIENT_CREATE_FAILED;
+                $this->resMessage  = CODE::CLIENT_CREATE_FAILED_MSG;
             }
 
         } catch (Exception $e) {

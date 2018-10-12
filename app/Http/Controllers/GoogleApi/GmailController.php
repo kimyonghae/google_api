@@ -10,16 +10,6 @@ class GmailController
 {
     private $resCode    = CODE::PROC_RETURN_DEFAULT;
     private $resMessage = CODE::PROC_RETURN_DEFAULT_MSG;
-    private $gmail;
-
-    /**
-     * GmailController constructor.
-     * @param Gmail $gmail
-     */
-    public function __construct(Gmail $gmail)
-    {
-        $this->gmail = $gmail;
-    }
 
     /**
      * Gmail 전송
@@ -43,7 +33,8 @@ class GmailController
             }
 
             //mail send by Gmail
-            $results = $this->gmail->sendMessage($gmailParam);
+            $gmail = new Gmail();
+            $results = $gmail->sendMessage($gmailParam);
 
             //mail result
             $this->resCode = $results['resCode'];

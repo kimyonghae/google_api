@@ -14,6 +14,10 @@ class TestController
     public function test()
     {
 
+        $hash = hash('SHA1', 'password');
+        echo $hash;
+        exit;
+
         $arr_f_name = ['lee','kim','park','choi','kang','jung','lim'];
         $arr_g_name = ['Jennifer','Kyle','Elica','Sunny','Charles','Eugine','Elynne','Jason','Carrie','Elsa','Justin','Elizabeth','Kate','Angela'];
 

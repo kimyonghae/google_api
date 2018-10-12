@@ -14,21 +14,27 @@ use Google_Service_Directory_UserName;
  */
 class GSuiteAdmin
 {
-    private $resCode ='9999';
-    private $resMessage = '처리할 수 없습니다.';
+    private $resCode    = CODE::PROC_RETURN_DEFAULT;
+    private $resMessage = CODE::PROC_RETURN_DEFAULT_MSG;
 
     private $service;
 
     /**
-     * GSuiteAdmin constructor.
-     * @param GoogleClient $GSuiteAdminClient
-     * @internal param $
+     * client 생성
+     * @return bool
      */
-    public function __construct(GoogleClient $GSuiteAdminClient)
+    private function getGSuiteAdminClient()
     {
-        $client = $GSuiteAdminClient->getClient(CODE::GOOGLE_API_GSUITEADMIN);
-        $service = new Google_Service_Directory($client);
-        $this->service = $service->users;
+        try {
+            $GSuiteAdminClient = new GoogleClient();
+            $client = $GSuiteAdminClient->getClient(CODE::GOOGLE_API_GSUITEADMIN);
+            $service = new Google_Service_Directory($client);
+            $this->service = $service->users;
+            return true;
+        } catch (Exception $e) {
+            echo 'getGSuiteAdminClient: ' . $e->getMessage();
+            return false;
+        }
     }
 
     /**
@@ -40,18 +46,24 @@ class GSuiteAdmin
     {
 
         try {
+            $client = $this->getGSuiteAdminClient();
+            if($client){
+                $userInfo = $this->setUserInfo($googleUserParam);
 
-            $userInfo = $this->setUserInfo($googleUserParam);
+                $results = $this->service->insert($userInfo);
 
-            $results = $this->service->insert($userInfo);
-
-            if ($results) {
-                $this->resCode    = CODE::PROC_RETURN_SUCCEED;
-                $this->resMessage = CODE::PROC_RETURN_SUCCEED_MSG;
-            } else {
-                $this->resCode    = CODE::PROC_RETURN_FAILED;
-                $this->resMessage = CODE::PROC_RETURN_FAILED_MSG;
+                if ($results) {
+                    $this->resCode    = CODE::PROC_RETURN_SUCCEED;
+                    $this->resMessage = CODE::PROC_RETURN_SUCCEED_MSG;
+                } else {
+                    $this->resCode    = CODE::PROC_RETURN_FAILED;
+                    $this->resMessage = CODE::PROC_RETURN_FAILED_MSG;
+                }
+            }else{
+                $this->resCode     = CODE::CLIENT_CREATE_FAILED;
+                $this->resMessage  = CODE::CLIENT_CREATE_FAILED_MSG;
             }
+
         } catch (Exception $e) {
             echo 'insertUser: ' . $e->getMessage();
             $this->resCode     = CODE::PROC_RETURN_ERROR;
